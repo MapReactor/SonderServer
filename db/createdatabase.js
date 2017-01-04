@@ -1,3 +1,4 @@
+// For local deployment
 // RUN THIS COMMAND VIA:
 // npm run db:create
 
