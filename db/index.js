@@ -4,6 +4,8 @@ var knex = require('knex')({
   client: 'pg',
   connection: config
 });
+console.log("Initializing Database...");
+console.log("DATABASE_URL:" + config);
 
 var db = require('bookshelf')(knex);
 db.plugin('registry');
