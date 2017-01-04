@@ -1,6 +1,7 @@
 //For Heroku Deployment
 var URI = require('urijs');
 var config = URI.parse(process.env.DATABASE_URL);
+config['ssl'] = true;
 
 module.exports = config;
 // module.exports = {
