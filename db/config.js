@@ -1,8 +1,9 @@
 //For Heroku Deployment
 var URI = require('urijs');
-var config = URI.parse(process.env.DATABASE_URL);
-config['ssl'] = true;
+// var config = URI.parse(process.env.DATABASE_URL);
+// config['ssl'] = true;
 
+var config = process.env.DATABASE_URL;
 module.exports = config;
 // module.exports = {
 //   database: 'sonder',
