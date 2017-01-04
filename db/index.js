@@ -5,7 +5,7 @@ var knex = require('knex')({
   connection: config
 });
 console.log("Initializing Database...");
-console.log("DATABASE_URL:" + config);
+console.log("DATABASE_URL:" + JSON.stringify(config));
 
 var db = require('bookshelf')(knex);
 db.plugin('registry');
