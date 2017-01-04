@@ -1,4 +1,9 @@
+//For Heroku Deployment
+var uri = URI.parse(ENV["REDIS_URL"]);
+//REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+
 module.exports = {
-  host:'192.168.99.100',
-  port:'32768'
+  host: uri.host,
+  port:uri.port,
+  password: uri.password
 };
