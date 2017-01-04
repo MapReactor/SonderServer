@@ -6,7 +6,7 @@ bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
 
 console.log("Initializing Redis...");
-console.log("REDIS_URL:" + config);
+console.log("REDIS_URL:" + JSON.stringify(config));
 
 client = redis.createClient(config);
 
