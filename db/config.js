@@ -1,6 +1,6 @@
 //For Heroku Deployment
 var URI = require('urijs');
-var config = URI.parse(ENV["DATABASE_URL"]);
+var config = URI.parse(process.env.DATABASE_URL);
 
 module.exports = config;
 // module.exports = {
