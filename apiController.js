@@ -59,15 +59,38 @@ exports.getLocation = function (req, res) {
 // 1) ensure only one user of same name
 // 2) sanity check on data
 exports.addUser = function (req, res) {
-  if (req.body.username && req.body.token) {
+  if (req.body.id && req.body.displayname && req.body.email && req.body.token) {
     Users.create({
-      username: req.body.username,
+      fb_id: req.body.id,
+      displayname: req.body.displayname,
+      email: req.body.email,
       token: req.body.token
     }).then(function(user) {
       res.send(user);
+    }).catch( function(error) {
+      var error = { code: 401, message: error };
+      res.status(401).send(error);
     });
   } else {
-    var error = { code: 400, message: "addUser requires username and token in request body"};
+    var error = { code: 400, message: 'addUser requires id, displayname, email, and token in request body' };
+    res.status(400).send(error);
+  }
+};
+
+exports.addFriends = function (req, res) {
+  if (req.body.id && req.body.friendlist) {
+    new User({
+      fb_id: req.body.id
+    }).fetch().then(function(user) {
+      new User({
+        username: req.body.friendname
+      }).fetch().then(function(friend) {
+        user.following().attach(friend);
+        res.send(user);
+      });
+    });
+  } else {
+    var error = { code: 400, message: "addFriend requires username and friendname in request body"};
     res.status(400).send(error);
   }
 };
