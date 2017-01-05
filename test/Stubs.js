@@ -16,11 +16,22 @@ module.exports = {
       this._ended = true;
       this._data = data;
     }.bind(this);
+
+    this.status = function(code) {
+      this._responseCode = code;
+      return this;
+    }.bind(this);
+
+    this.send = function(data) {
+      this._ended = true;
+      this._data = data;
+    }.bind(this);
   },
 
   request: function(url, method, postdata) {
     this.url = url;
     this.method = method;
+    this.body = postdata;
     this._postData = postdata;
     this.setEncoding = function() { /* noop */ };
 

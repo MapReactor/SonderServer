@@ -1,11 +1,9 @@
 //For Heroku Deployment
-var URI = require('urijs');
-var config = process.env.REDIS_URL;
-module.exports = config;
-//REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+// var config = process.env.REDIS_URL;
+// module.exports = config;
 
-// module.exports = {
-//   host: uri.host,
-//   port:uri.port,
-//   password: uri.password
-// };
+//For Local Deployment
+module.exports = {
+  host:'192.168.99.100',
+  port:'32768'
+};

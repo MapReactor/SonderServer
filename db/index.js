@@ -16,9 +16,11 @@ db.knex.schema.hasTable('users')
   if (!exists) {
     db.knex.schema.createTable('users', function (table) {
       table.increments('id').primary();
-      table.string('username', 255);
+      table.bigint('fb_id', 15);
+      table.string('displayname', 255);
+      table.string('email', 255);
       table.string('token', 255);
-      table.unique('username');
+      table.unique('fb_id');
     })
     .then(function (table) {
       db.knex.schema.hasTable('users_users')
