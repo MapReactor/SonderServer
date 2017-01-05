@@ -2,12 +2,13 @@ const config = require('./config.js');
 
 var knex = require('knex')({
   client: 'pg',
-  connection: config
+  connection: config || null
 });
 console.log("Initializing Database...");
 console.log("DATABASE_URL:" + JSON.stringify(config));
 
 var db = require('bookshelf')(knex);
+
 db.plugin('registry');
 
 db.knex.schema.hasTable('users')
@@ -51,6 +52,8 @@ db.knex.schema.hasTable('users')
       });
     });
   }
+}).catch(function(error){
+  console.log('Cannot Connect to Database');
 });
 
 
