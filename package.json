@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node ./node_modules/mocha/bin/mocha",
     "db:create": "node db/createdatabase.js",
     "db:drop": "node db/dropdatabase.js",
     "reset": "node db/dropdatabase.js && node db/createdatabase.js"
@@ -21,6 +21,12 @@
     "pg": "^6.1.2",
     "pgtools": "^0.2.3",
     "redis": "^2.6.3",
-    "urijs": "^1.18.4"
+    "urijs": "^1.18.4",
+    "sqlite3": "^3.1.8"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "supertest": "^2.0.1"
   }
 }
