@@ -77,17 +77,24 @@ exports.addUser = function (req, res) {
   }
 };
 
-exports.addFriends = function (req, res) {
-  if (req.body.id && req.body.friendlist) {
+exports.updateFriends = function (req, res) {
+  if (req.body.id && req.body.friendlist && Array.isArray(req.body.friendlist)) {
     new User({
       fb_id: req.body.id
     }).fetch().then(function(user) {
+      //loop through friendlist and find those who:
+        // are already friends (do nothing)
+        // are new friends (add them)
+        // are no longer friends (remove them)
       new User({
         username: req.body.friendname
       }).fetch().then(function(friend) {
         user.following().attach(friend);
         res.send(user);
       });
+    }).catch( function(error) {
+      var error = { code: 401, message: error };
+      res.status(401).send(error);
     });
   } else {
     var error = { code: 400, message: "addFriend requires username and friendname in request body"};
@@ -95,6 +102,7 @@ exports.addFriends = function (req, res) {
   }
 };
 
+//Deprecated - see updateFriends
 exports.addFriend = function (req, res) {
   if (req.body.username && req.body.friendname) {
     new User({
@@ -114,20 +122,23 @@ exports.addFriend = function (req, res) {
 };
 
 exports.updateLocation = function (req, res) {
-  if (req.body.longitude && req.body.latitude && req.body.bearing && req.body.username) {
+  if (req.body.longitude && req.body.latitude && req.body.bearing && req.body.id) {
     var location = {
       longitude: req.body.longitude,
       latitude: req.body.latitude,
       bearing: req.body.bearing,
     };
     new User({
-      username: req.body.username
+      fb_id: req.body.id
     }).fetch().then(function(user) {
       location['user_id'] = user.id;
       Locations.create(location).then( function(location) {
         redis.set(req.body.username, JSON.stringify(location));
         res.send(location);
       });
+    }).catch( function(error) {
+      var error = { code: 401, message: error };
+      res.status(401).send(error);
     });
   } else {
     var error = { code: 400, message: "updateLocation requires username, longitude, latitude, and bearing  in request body"};
