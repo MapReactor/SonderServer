@@ -14,9 +14,9 @@ exports.getUsers = function (req, res) {
 };
 
 exports.getFriends = function (req, res) {
-  if (req.params.username) {
+  if (req.params.id) {
     new User({
-      username: req.params.username
+      fb_id: req.params.id
     }).fetch({withRelated: 'following'}).then(function(user) {
       res.send(user);
     });
@@ -27,9 +27,9 @@ exports.getFriends = function (req, res) {
 };
 
 exports.getHistory = function (req, res) {
-  if (req.params.username) {
+  if (req.params.id) {
     new User({
-      username: req.params.username
+      fb_id: req.params.id
     }).fetch({withRelated: 'locations'}).then(function(user) {
       res.send(user);
     });
@@ -40,14 +40,24 @@ exports.getHistory = function (req, res) {
 };
 
 //TODO get location is not currently returning the latest location, but rather is returning all location data.
-exports.getLocation = function (req, res) {
-  if (req.params.username) {
-    redis.get(req.params.username, function(err, value){
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(JSON.parse(value));
+exports.getLocations = function (req, res) {
+  if (req.params.id) {
+    new User({
+      fb_id: req.params.id
+    }).fetch({withRelated: 'following'}).then(function(user) {
+      // get the friend location data.
+      var user = JSON.parse(JSON.stringify(user));
+      var friends = [];
+      for (var i = 0; i < user.following.length; i++) {
+        friends.push(user.following[i]["fb_id"]);
       }
+      redis.mget(friends, function(err, value){
+        if (err) {
+          res.send(err);
+        } else {
+          res.send(JSON.parse('[' + value + ']'));
+        }
+      });
     });
   } else {
     var error = { code: 400, message: "getLocation requires username as request parameter"};
@@ -86,15 +96,25 @@ exports.updateFriends = function (req, res) {
         // are already friends (do nothing)
         // are new friends (add them)
         // are no longer friends (remove them)
-      new User({
-        username: req.body.friendname
-      }).fetch().then(function(friend) {
-        user.following().attach(friend);
-        res.send(user);
-      });
+      friendsAdded = 0;
+      for (var i = 0; i < req.body.friendlist.length; i++) {
+        new User({
+          fb_id: req.body.friendlist[i]
+        }).fetch().then(function(friend) {
+          user.following().attach(friend);
+          friendsAdded++;
+          if (friendsAdded === req.body.friendlist.length) {
+            new User({
+              fb_id: req.body.id
+            }).fetch({withRelated: 'following'}).then(function(user) {
+              res.send(user);
+            });
+          }
+        });
+      }
     }).catch( function(error) {
-      var error = { code: 401, message: error };
-      res.status(401).send(error);
+      var err = { code: 401, message: error };
+      res.status(401).send(err);
     });
   } else {
     var error = { code: 400, message: "addFriend requires username and friendname in request body"};
@@ -124,16 +144,16 @@ exports.addFriend = function (req, res) {
 exports.updateLocation = function (req, res) {
   if (req.body.longitude && req.body.latitude && req.body.bearing && req.body.id) {
     var location = {
-      longitude: req.body.longitude,
-      latitude: req.body.latitude,
-      bearing: req.body.bearing,
+      'longitude': req.body.longitude,
+      'latitude': req.body.latitude,
+      'bearing': req.body.bearing,
     };
     new User({
       fb_id: req.body.id
     }).fetch().then(function(user) {
       location['user_id'] = user.id;
       Locations.create(location).then( function(location) {
-        redis.set(req.body.username, JSON.stringify(location));
+        redis.set(req.body.id, JSON.stringify(location));
         res.send(location);
       });
     }).catch( function(error) {
@@ -141,7 +161,7 @@ exports.updateLocation = function (req, res) {
       res.status(401).send(error);
     });
   } else {
-    var error = { code: 400, message: "updateLocation requires username, longitude, latitude, and bearing  in request body"};
+    var error = { code: 400, message: "updateLocation requires id, longitude, latitude, and bearing  in request body"};
     res.status(400).send(error);
   }
 };
