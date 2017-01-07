@@ -18,6 +18,7 @@ db.knex.schema.hasTable('users')
       table.increments('id').primary();
       table.bigint('fb_id', 15);
       table.string('displayname', 255);
+      table.string('picture', 255);
       table.string('email', 255);
       table.string('token', 255);
       table.unique('fb_id');

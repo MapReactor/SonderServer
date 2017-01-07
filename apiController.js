@@ -74,6 +74,7 @@ exports.addUser = function (req, res) {
       fb_id: req.body.id,
       displayname: req.body.displayname,
       email: req.body.email,
+      picture: req.body.picture || '',
       token: req.body.token
     }).then(function(user) {
       res.send(user);
