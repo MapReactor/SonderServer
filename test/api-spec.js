@@ -21,7 +21,7 @@ describe('All API route controllers exist', function() {
     expect(apiController.addUser).to.exist;
   });
   it('should have a addFriend controller', function() {
-    expect(apiController.addFriend).to.exist;
+    expect(apiController.updateFriends).to.exist;
   });
   it('should have a updateLocation controller', function() {
     expect(apiController.updateLocation).to.exist;
