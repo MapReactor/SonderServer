@@ -190,5 +190,15 @@ describe('Test POST to /api/friends', function() {
       apiController.updateFriends(req,res);
       expect(res._responseCode).to.equal(null);
     });
+    it('should accept request if all fields are present and acceptable', function() {
+      var stubMsg = {
+        id: '1234567890',
+        friendlist: ['2345678901','3456789012','4567890123']
+      };
+      var req = new stubs.request('/api/friends', 'POST', stubMsg);
+      var res = new stubs.response();
+      apiController.updateFriends(req,res);
+      expect(res._responseCode).to.equal(401);
+    });
   });
 });
