@@ -51,13 +51,17 @@ exports.getLocations = function (req, res) {
       for (var i = 0; i < user.following.length; i++) {
         friends.push(user.following[i]["fb_id"]);
       }
-      redis.mget(friends, function(err, value){
-        if (err) {
-          res.send(err);
-        } else {
-          res.send(JSON.parse('[' + value + ']'));
-        }
-      });
+      if (friends.length > 0) {
+        redis.mget(friends, function(err, value){
+          if (err) {
+            res.send(err);
+          } else {
+            res.send(JSON.parse('[' + value + ']'));
+          }
+        });
+      } else {
+        res.send([]);
+      }
     });
   } else {
     var error = { code: 400, message: "getLocation requires username as request parameter"};
@@ -74,7 +78,7 @@ exports.addUser = function (req, res) {
       fb_id: req.body.id,
       displayname: req.body.displayname,
       email: req.body.email,
-      picture: req.body.picture || '',
+      picture: req.body.email,
       token: req.body.token
     }).then(function(user) {
       res.send(user);
@@ -152,7 +156,7 @@ exports.updateLocation = function (req, res) {
     new User({
       fb_id: req.body.id
     }).fetch().then(function(user) {
-      location['user_id'] = user.id;
+      location['user_id'] = req.body.id;
       Locations.create(location).then( function(location) {
         redis.set(req.body.id, JSON.stringify(location));
         res.send(location);
