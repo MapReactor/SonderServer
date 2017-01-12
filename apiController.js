@@ -156,8 +156,9 @@ exports.updateLocation = function (req, res) {
     new User({
       fb_id: req.body.id
     }).fetch().then(function(user) {
-      location['user_id'] = req.body.id;
+      location['user_id'] = user.id;
       Locations.create(location).then( function(location) {
+        location["fb_id"] = req.body.id;
         redis.set(req.body.id, JSON.stringify(location));
         res.send(location);
       });
