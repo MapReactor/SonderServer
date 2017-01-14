@@ -8,6 +8,11 @@ bluebird.promisifyAll(redis.Multi.prototype);
 console.log("Initializing Redis...");
 console.log("REDIS_URL:" + JSON.stringify(config));
 
-var client = (config === undefined) ? null : redis.createClient(config);
+var createClient = (config === undefined) ?
+  function () {
+    return null;
+  } : function () {
+    return redis.createClient(config);
+  }
 
-module.exports = client;
+module.exports = createClient;

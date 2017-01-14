@@ -1,5 +1,5 @@
 const db = require('./db');
-const redis = require('./redis');
+const redis = require('./redis')();
 const User = require('./models/user.js');
 const Users = require('./models/users.js');
 const Location = require('./models/location.js');
