@@ -1,11 +1,11 @@
+const server = require('http').createServer();
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
-require('./middleware.js')(app, express);
+require('./middleware.js')(app, express, server);
 
-app.listen(port, function() {
-  console.log('Now listening on port', port);
-});
+server.on('request', app);
+server.listen(port, function () { console.log('Listening on ' + server.address().port) });
 
-module.exports = app;
+module.exports = server;

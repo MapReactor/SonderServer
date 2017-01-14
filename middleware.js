@@ -8,11 +8,14 @@ const allowCrossDomain = function(req, res, next) {
   next();
 };
 
-module.exports = function(app, express) {
+module.exports = function(app, express, server) {
   //app.use(morgan('dev'));
+  //Configure the WebSocketServer
+  require('./SonderLocationService')(server);
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(allowCrossDomain);
   app.use(express.static(__dirname + '/www'));
   app.use('/api', apiRouter);
+
 };
